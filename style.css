@@ -7,6 +7,12 @@
   --sky: #e8f2fa;
   --paper: #ffffff;
   --line: #cfe0ee;
+  --line-inverse: rgba(255, 255, 255, .35);
+  --paper-soft: rgba(255, 255, 255, .82);
+  --hero-shade-1: rgba(11, 79, 125, .92);
+  --hero-shade-2: rgba(18, 121, 190, .72);
+  --hero-shade-3: rgba(18, 121, 190, .35);
+  --todo: #667887;
 
   --font-head: "Source Serif 4", Georgia, serif;
   --font-body: "PT Sans", "Helvetica Neue", Arial, sans-serif;
@@ -30,6 +36,11 @@
   --text: 40rem;
   --header-h: 5rem;
   --callbar-h: 3.5rem;
+  --dot: .6rem;
+  --border: 1px;
+  --border-accent: 3px;
+  --photo-ratio: 4 / 5;
+  --photo-ratio-wide: 4 / 3;
   --ease: cubic-bezier(.4, 0, .2, 1);
 }
 
@@ -84,12 +95,15 @@ a { color: var(--blue); }
 /* Первый экран */
 .hero { position: relative; color: var(--paper); overflow: hidden; }
 .hero__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(11, 79, 125, .92) 0%, rgba(18, 121, 190, .72) 55%, rgba(18, 121, 190, .35) 100%); }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, var(--hero-shade-1) 0%, var(--hero-shade-2) 55%, var(--hero-shade-3) 100%); }
 .hero__inner { position: relative; z-index: 1; padding-block: var(--sp-6); }
 .hero__title { font: 700 var(--fs-4)/1.05 var(--font-head); margin: 0; max-width: 14ch; }
 .hero__sub { display: block; font-size: .55em; font-weight: 600; margin-top: var(--sp-2); }
 .hero__lead { font-size: var(--fs-2); margin: 0 0 var(--sp-4); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.hero__eyebrow { margin: 0 0 var(--sp-2); font-size: var(--fs-0); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--paper-soft); }
+.hero__trust { margin: var(--sp-3) 0 0; font-size: var(--fs-0); color: var(--paper-soft); }
+.hero__trust a { color: var(--paper); }
 
 /* Звуковая волна под заголовком. Без анимации прорисовки: на снимке в середине анимации линия выглядела обрезанной. */
 .wave { display: block; width: min(100%, 26rem); height: auto; margin: var(--sp-3) 0; }
@@ -98,30 +112,71 @@ a { color: var(--blue); }
 /* Разделы */
 .section { padding-block: var(--sp-6); }
 
-.problem { text-align: center; }
-.problem .h2 { margin-bottom: var(--sp-3); }
-.chips { list-style: none; margin: 0 auto var(--sp-3); padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-1); max-width: var(--text); }
-.chips li { border: 1px solid var(--line); background: var(--sky); border-radius: var(--radius); padding: var(--sp-1) var(--sp-2); }
-.problem__more { margin: 0 auto var(--sp-4); max-width: var(--text); }
-.problem__punch { font: 700 var(--fs-3)/1.2 var(--font-head); color: var(--blue); margin: 0 0 var(--sp-3); }
-.problem__call { max-width: var(--text); margin: 0 auto; color: var(--ink-soft); }
+.section--sky { background: var(--sky); }
+/* Два белых раздела подряд: без второго верхнего отступа, иначе между ними двойная пустота */
+.section:not(.section--sky) + .section:not(.section--sky) { padding-top: 0; }
 
-.steps { background: var(--sky); }
+/* Заголовок слева, содержимое справа; на узком экране друг под другом */
+.split { display: grid; gap: 0 var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); align-items: start; }
+
+/* Список с синими точками; --grid — сетка с линиями, --cols — в две колонки на широком экране */
+.dots { list-style: none; margin: 0; padding: 0; }
+.dots li { position: relative; padding: var(--sp-1) 0 var(--sp-1) var(--sp-3); }
+.dots li::before { content: ""; position: absolute; left: 0; top: 1.15em; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--blue); }
+.dots--cols { display: grid; gap: 0 var(--sp-4); grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); }
+.dots--grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); border-top: var(--border) solid var(--line); }
+.dots--grid li { padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4); border-bottom: var(--border) solid var(--line); }
+.dots--grid li::before { left: var(--sp-2); top: 1.35em; }
+
+/* Карточки */
+.cards { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.card { border: var(--border) solid var(--line); border-top: var(--border-accent) solid var(--blue); border-radius: var(--radius-box); padding: var(--sp-3); background: var(--paper); }
+.card__title { font: 700 var(--fs-2)/1.25 var(--font-head); margin: 0 0 var(--sp-1); }
+
+/* Призыв под карточками */
+.callout { margin-top: var(--sp-4); text-align: center; }
+.callout__punch { font: 700 var(--fs-3)/1.2 var(--font-head); color: var(--blue); margin: 0 0 var(--sp-2); }
+.callout__text { max-width: var(--text); margin: 0 auto var(--sp-3); color: var(--ink-soft); }
+
+.note { max-width: var(--text); margin: var(--sp-3) 0 0; }
+
 .steps__list { list-style: none; counter-reset: step; margin: 0; padding: 0; display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
 .step { counter-increment: step; border-top: 3px solid var(--blue); padding-top: var(--sp-2); }
 .step::before { content: counter(step); display: block; font: 700 var(--fs-3)/1 var(--font-head); color: var(--blue); margin-bottom: var(--sp-1); }
 .step__title { font: 700 var(--fs-2)/1.25 var(--font-head); margin: 0 0 var(--sp-1); }
+.step__text { margin: 0; color: var(--ink-soft); }
 .steps__lead { max-width: var(--text); margin: 0 0 var(--sp-4); color: var(--ink-soft); }
 
 .about__inner { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); align-items: start; }
 .about__quote { margin: 0; padding-left: var(--sp-3); border-left: 4px solid var(--blue); font: 600 var(--fs-3)/1.25 var(--font-head); }
 .about__text { margin: 0; }
 
-.benefits { padding-top: 0; }
 .benefits__lead { margin: 0 0 var(--sp-3); color: var(--ink-soft); }
-.benefits__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); border-top: 1px solid var(--line); }
-.benefits__list li { position: relative; padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4); border-bottom: 1px solid var(--line); }
-.benefits__list li::before { content: ""; position: absolute; left: var(--sp-2); top: 1.35em; width: .6rem; height: .6rem; border-radius: 50%; background: var(--blue); }
+
+/* O mnie: фото, текст, фото кабинета */
+.bio { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); align-items: start; }
+.bio__text p { margin: var(--sp-2) 0 0; }
+
+/* Место под фото, пока фото нет */
+.photo-slot { display: flex; align-items: center; justify-content: center; aspect-ratio: var(--photo-ratio); border: 2px dashed var(--todo); border-radius: var(--radius-box); color: var(--todo); background: var(--paper); font-size: var(--fs-0); text-align: center; padding: var(--sp-2); }
+.photo-slot--wide { aspect-ratio: var(--photo-ratio-wide); }
+
+/* Незаполненное значение: прочерк, видно, что сюда надо вписать */
+.todo { display: inline-block; min-width: 3em; text-align: center; color: var(--todo); border-bottom: 2px dashed var(--todo); }
+.todo--inverse { color: var(--paper-soft); border-bottom-color: var(--paper-soft); }
+
+/* Таблица: цены на светлом фоне, часы — на синем (--inverse) */
+.table { width: 100%; max-width: var(--text); border-collapse: collapse; }
+.table th, .table td { padding: var(--sp-2) 0; border-bottom: var(--border) solid var(--line); text-align: left; }
+.table th { font-weight: 400; }
+.table td { text-align: right; font-weight: 700; white-space: nowrap; }
+.table--inverse th, .table--inverse td { border-bottom-color: var(--line-inverse); padding-block: var(--sp-1); }
+
+/* Вопросы и ответы */
+.faq { max-width: var(--text); border-top: var(--border) solid var(--line); }
+.faq__item { border-bottom: var(--border) solid var(--line); }
+.faq__item summary { cursor: pointer; padding: var(--sp-2) 0; font-weight: 700; }
+.faq__item p { margin: 0 0 var(--sp-2); }
 
 /* Контакты */
 .contact { background: var(--blue); color: var(--paper); padding-block: var(--sp-6); }
@@ -131,6 +186,8 @@ a { color: var(--blue); }
 .person { margin-top: var(--sp-4); }
 .person__name { font: 700 var(--fs-2)/1.2 var(--font-head); margin: 0 0 var(--sp-1); }
 .person__roles { list-style: none; margin: 0; padding: 0; }
+.contact__mail { margin: var(--sp-3) 0 0; }
+.contact__h3 { font: 700 var(--fs-2)/1.2 var(--font-head); margin: var(--sp-4) 0 var(--sp-1); }
 .contact__bye { font: 600 var(--fs-2)/1.2 var(--font-head); margin: var(--sp-4) 0 0; }
 .contact__map { display: flex; flex-direction: column; gap: var(--sp-1); }
 .contact__map iframe { width: 100%; min-height: 24rem; flex: 1; border: 0; border-radius: var(--radius-box); background: var(--sky); }
@@ -153,7 +210,7 @@ a { color: var(--blue); }
 /* Кнопка звонка внизу экрана — только на телефоне */
 .callbar { display: none; }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .menu-btn { display: inline-flex; }
   .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; gap: 0; background: var(--paper); border-bottom: 1px solid var(--line); }
   .top--open .nav { display: flex; }
