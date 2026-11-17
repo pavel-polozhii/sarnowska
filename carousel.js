@@ -38,11 +38,17 @@
     var back = nav.querySelector('[data-step="-1"]');
     var next = nav.querySelector('[data-step="1"]');
 
+    // Карточка ставится по центру ленты: считаем по центрам, а не по левым краям
+    function offsetToCenter(item) {
+      var t = track.getBoundingClientRect();
+      var r = item.getBoundingClientRect();
+      return (r.left + r.width / 2) - (t.left + track.clientWidth / 2);
+    }
+
     function current() {
-      var left = track.scrollLeft;
       var best = 0;
       items.forEach(function (item, i) {
-        if (Math.abs(item.offsetLeft - track.offsetLeft - left) < Math.abs(items[best].offsetLeft - track.offsetLeft - left)) best = i;
+        if (Math.abs(offsetToCenter(item)) < Math.abs(offsetToCenter(items[best]))) best = i;
       });
       return best;
     }
@@ -58,7 +64,7 @@
 
     function goTo(i) {
       i = Math.max(0, Math.min(items.length - 1, i));
-      var to = items[i].offsetLeft - track.offsetLeft;
+      var to = track.scrollLeft + offsetToCenter(items[i]);
       var from = track.scrollLeft;
       track.scrollTo({ left: to, behavior: 'smooth' });
       // плавная прокрутка не сработала — доезжаем рывком: кнопка обязана двигать ленту

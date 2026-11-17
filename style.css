@@ -43,7 +43,8 @@
   --photo-hero: min(22rem, 70vw);
   --photo-ratio: 4 / 5;
   --photo-ratio-wide: 4 / 3;
-  --rail-card: 85%;
+  --rail-card: 80vw;
+  --rail-pad: 10vw;
   --map-min: 24rem;
   --lightbox-h: 65vh;
   --ease: cubic-bezier(.4, 0, .2, 1);
@@ -134,7 +135,7 @@ a { color: var(--blue); }
 /* Плитки с иконкой сверху */
 .tiles { display: grid; gap: var(--sp-3); }
 .tiles--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
-.tiles--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.tiles--3 { grid-template-columns: repeat(3, 1fr); }
 .tile { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); padding: var(--sp-3); background: var(--paper); border-radius: var(--radius-tile); box-shadow: var(--shadow); transition: transform .2s var(--ease); }
 .tile:hover { transform: translateY(-2px); }
 .tile__title { font: 800 var(--fs-2)/1.25 var(--font); margin: 0; }
@@ -270,9 +271,16 @@ button.photo-slot:hover { border-color: var(--blue); color: var(--blue); }
 @media (max-width: 760px) {
   .hero__inner { grid-template-columns: 1fr; }
   .hero__photo { order: -1; }
-  .rail__track--3 { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: var(--rail-card); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  .rail__track--3 > * { scroll-snap-align: start; }
-  .path { grid-auto-columns: var(--rail-card); }
+  /* Телефон: заголовки и содержимое плиток по центру */
+  .h2, .h3, .lead, .note, .path__lead, .callout, .hero__text { text-align: center; }
+  .hero__actions { justify-content: center; }
+  .tiles--3 { grid-template-columns: 1fr; }
+  .lead, .path__lead, .note { margin-inline: auto; }
+  .tile, .path__step { align-items: center; text-align: center; }
+  .bubbles, .tags { justify-content: center; }
+  /* Ленты во всю ширину экрана: карточка стоит по центру, по краям видны соседние — и в покое, и после листания */
+  .rail__track--3, .path { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: var(--rail-card); gap: var(--sp-2); margin-inline: calc(50% - 50vw); padding: var(--sp-1) var(--rail-pad); scroll-padding-inline: var(--rail-pad); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .rail__track--3 > *, .path__step { scroll-snap-align: center; }
   .bio { grid-template-columns: 1fr; }
   .bio > .photo-slot { max-width: 18rem; }
   .contact--over-map { padding-block: 0; }
